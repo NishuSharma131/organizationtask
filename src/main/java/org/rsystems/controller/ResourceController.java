@@ -2,14 +2,10 @@ package org.rsystems.controller;
 
 
 import org.rsystems.enums.ResourceAllocation;
-import org.rsystems.model.Project;
-import org.rsystems.model.ProjectResources;
-import org.rsystems.model.Resource;
 import org.rsystems.model.Resource;
 import org.rsystems.response.Status;
 import org.rsystems.response.WebServiceResponse;
 import org.rsystems.services.ProjectResourceService;
-import org.rsystems.services.ProjectService;
 import org.rsystems.services.ResourceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,39 +23,19 @@ public class ResourceController {
     ResourceService resourceService;
 
     @Autowired
-    ProjectService projectService;
-
-    @Autowired
     ProjectResourceService projectResourceService;
-
 
 
     @ResponseBody
     @RequestMapping(value = "/createResource", method = RequestMethod.POST)
-    public WebServiceResponse createNewResource(@RequestParam(value="project_id",required = true) int project_id,
-                                              @RequestParam(value = "allocation") int allocation, @RequestBody Resource resource) {
+    public WebServiceResponse createNewResource( @RequestBody Resource resource) {
         WebServiceResponse response = new WebServiceResponse();
-        Project project=projectService.getProjectById(project_id);
-        if(project==null){
-            response.setMessage("Project id is not available. Please try other unique id.");
-            response.setStatus(Status.FAIL);
-            return response;
-        } else if (allocation!=ResourceAllocation.Full||allocation!=ResourceAllocation.HALF) {
-            response.setMessage("Resource allocation should be 50 or 100 .");
-            response.setStatus(Status.FAIL);
-            return response;
-        }
+
         Resource newResource = new Resource();
         newResource.setResource_name(resource.getResource_name());
-        //newResource.setProject_id(resource.getProject_id());
         newResource.setDesignation_id(resource.getDesignation_id());
         try {
             int id = resourceService.saveNewResource(newResource);
-           ProjectResources projectResources=new ProjectResources();
-           projectResources.setResource_allocate_id(id);
-           projectResources.setProject_allocate_id(project_id);
-            projectResources.setAllocation(allocation);
-            updateProjectResource(projectResources);
             response.setInfo(newResource);
             response.setStatus(Status.SUCCESS);
             response.setMessage("Resource with "+id+" is created successfully.");
@@ -67,7 +43,7 @@ public class ResourceController {
             e.printStackTrace();
             response.setInfo(newResource);
             response.setStatus(Status.FAIL);
-            response.setMessage("Organization is not saved.\n\n" + e.getMessage());
+            response.setMessage("Resource is not saved.\n\n" + e.getMessage());
         }
         return response;
     }
@@ -77,17 +53,18 @@ public class ResourceController {
     public WebServiceResponse updateResource(@RequestBody Resource resource) {
         WebServiceResponse response = new WebServiceResponse();
         try {
-            Resource resourceFromDB = resourceService.getResourceById(resource.getResource_id());
-            if (resource != null) {
-                if (resourceFromDB != null ) {
+             if (resource != null) {
+                 Resource resourceFromDB = resourceService.getResourceById(resource.getResource_id());
+
+                 if (resourceFromDB == null ) {
                     response.setMessage("Resource id is not available. Please try other unique id.");
                     response.setStatus(Status.FAIL);
                     return response;
                 }
             }
-            resourceService.updateResource(resourceFromDB);
+            resourceService.updateResource(resource);
             response.setMessage("Resource status is updated successfully.");
-            response.setInfo(resourceFromDB);
+            response.setInfo(resource);
             response.setStatus(Status.SUCCESS);
         } catch (Exception ex) {
             response.setMessage("Resource details not updated");
@@ -133,11 +110,11 @@ public class ResourceController {
 
     @ResponseBody
     @RequestMapping(value = "/updateProjectResource", method = RequestMethod.POST)
-    public WebServiceResponse updateProjectResource(@RequestBody ProjectResources projectResources) {
+    public WebServiceResponse updateProjectResource(@RequestBody Resource resource) {
         WebServiceResponse response = new WebServiceResponse();
         try {
-            ProjectResources resourceFromDB = projectResourceService.getResourceById(projectResources.getResource_allocate_id());
-           int allocationValue=projectResourceService.getResourceAllocation(projectResources.getResource_allocate_id());
+            Resource resourceFromDB = resourceService.getResourceById(resource.getResource_id());
+           int allocationValue= projectResourceService.getResourceAllocation(resource.getResource_id());
             if (resourceFromDB == null) {
 
                     response.setMessage("Resource id is not available. Please try other unique id.");
@@ -149,8 +126,8 @@ public class ResourceController {
                 response.setStatus(Status.FAIL);
                 return response;
             }
-            projectResourceService.saveAndUpdateProjectResources(resourceFromDB);
-            response.setMessage("ProjectResources status is updated successfully.");
+            resourceService.updateResource(resource);
+            response.setMessage("Resource status is updated successfully.");
             response.setInfo(resourceFromDB);
             response.setStatus(Status.SUCCESS);
         } catch (Exception ex) {

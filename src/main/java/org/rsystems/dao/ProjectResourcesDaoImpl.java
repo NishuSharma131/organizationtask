@@ -25,7 +25,7 @@ public class ProjectResourcesDaoImpl extends AbstractDao<Integer, ProjectResourc
 
     @Override
     public int getResourceAllocation(int resource_allocation_id) {
-        Query query = getSession().createQuery("select sum(allocation) from " + ProjectResources.class.getSimpleName() + " where resource_allocation_id =:sprintName");
+        Query query = getSession().createQuery("select sum(allocation) from " + ProjectResources.class.getSimpleName() + " where resource_allocation_id =:resource_allocation_id");
         query.setParameter("resource_allocation_id", resource_allocation_id);
 
         return query.getFirstResult();

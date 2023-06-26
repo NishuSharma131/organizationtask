@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/projects")
+@RequestMapping("/project")
 public class ProjectController {
     Logger LOG = LoggerFactory.getLogger(ProjectController.class);
     @Autowired
@@ -24,21 +24,17 @@ public class ProjectController {
 
     @ResponseBody
     @RequestMapping(value = "/createProject", method = RequestMethod.POST)
-    public WebServiceResponse createNewProject(
-           // @RequestParam(value = "project_id", defaultValue = "0") int project_id, @RequestParam(value = "current_project_id") int current_project_id,
-    @RequestBody Project project) {
+    public WebServiceResponse createNewProject( @RequestBody Project project) {
         WebServiceResponse response = new WebServiceResponse();
         Project newProject = new Project();
         newProject.setProject_name(project.getProject_name());
         newProject.setAllocated_capital(project.getAllocated_capital());
-       // newProject.setResource_id(project.getResource_id());
-        //newProject.setUsed_capital(project.getUsed_capital());//need to add it on runtime
         try {
             int id = projectService.saveNewProject(newProject);
             //  newProject.setOrganization_id(organization_id);
             response.setInfo(newProject);
             response.setStatus(Status.SUCCESS);
-            response.setMessage("Organization with"+id+" is created successfully.");
+            response.setMessage("Project with "+id+" is created successfully.");
         } catch (Exception e) {
             e.printStackTrace();
             response.setInfo(newProject);
@@ -49,13 +45,13 @@ public class ProjectController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/updateProject", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateProject", method = RequestMethod.PUT)
     public WebServiceResponse updateProject(@RequestBody Project project) {
         WebServiceResponse response = new WebServiceResponse();
         try {
             Project projectFromDB = projectService.getProjectById(project.getProject_id());
             if (project != null) {
-                if (projectFromDB != null ) {
+                if (projectFromDB == null ) {
                     response.setMessage("Project id is not available. Please try other unique id.");
                     response.setStatus(Status.FAIL);
                     return response;

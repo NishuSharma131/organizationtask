@@ -26,20 +26,12 @@ public class OrganizationController {
             //@RequestParam(value = "organization_id", defaultValue = "0") int organization_id, @RequestParam(value = "current_organization_id") int current_organization_id,
                                                    @RequestBody Organization organization) {
         WebServiceResponse response = new WebServiceResponse();
-        /*Organization existedOrganization = organizationService.getOrganizationById(current_organization_id);
-        if (existedOrganization == null) {
-            response.setMessage("Organization Not Found.");
-            response.setStatus(Status.FAIL);
-            return response;
-        }
-        if(organization_id<1){*/
             Organization newOrganization = new Organization();
             newOrganization.setOrg_name(organization.getOrg_name());
             newOrganization.setTotal_cost(organization.getTotal_cost());
             newOrganization.setProject_id(organization.getProject_id());
             try {
                 int id = organizationService.saveNewOrganization(newOrganization);
-              //  newOrganization.setOrganization_id(organization_id);
                 response.setInfo(newOrganization);
                 response.setStatus(Status.SUCCESS);
                 response.setMessage("Organization with"+id+" is created successfully.");
@@ -49,28 +41,11 @@ public class OrganizationController {
                 response.setStatus(Status.FAIL);
                 response.setMessage("Organization is not saved.\n\n" + e.getMessage());
             }
-       /* } else {
-            Organization newOrganization = organizationService.getOrganizationById(organization_id);
-            newOrganization.setOrganization_name(organization.getOrganization_name());
-            newOrganization.setTotal_cost(organization.getTotal_cost());
-
-            try {
-                organizationService.updateOrganization(organization);
-                response.setInfo(newOrganization);
-                response.setStatus(Status.SUCCESS);
-                response.setMessage("Organization is updated successfully.");
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.setInfo(newOrganization);
-                response.setStatus(Status.FAIL);
-                response.setMessage("Organization is not updated.\n\n" + e.getMessage());
-            }
-        }*/
-        return response;
+              return response;
     }
 
     @ResponseBody
-    @RequestMapping(value = "/updateOrganization", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateOrganization", method = RequestMethod.PUT)
     public WebServiceResponse updateOrganization(@RequestBody Organization organization) {
         WebServiceResponse response = new WebServiceResponse();
         try {
@@ -105,7 +80,7 @@ public class OrganizationController {
             webServiceResponse.setStatus(Status.SUCCESS);
             webServiceResponse.setMessage("Organization is deleted successfully.");
         } else {
-            webServiceResponse.setStatus(Status.SUCCESS);
+            webServiceResponse.setStatus(Status.FAIL);
             webServiceResponse.setMessage("Organization not found.");
         }
         return webServiceResponse;

@@ -51,6 +51,7 @@ public class DesignationServiceImpl implements DesignationService {
     @Override
     public Designation findByDesignationId(int id) {
         Designation designation = designationDao.getDesignationById(id);
+        System.out.println(designation);
         return designation;
     }
 

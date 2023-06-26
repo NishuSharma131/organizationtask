@@ -51,30 +51,12 @@ public class DesignationController {
             response.setStatus(Status.FAIL);
             response.setMessage("Designation is not saved.\n\n" + e.getMessage());
         }
-     /*   if(designation_id<1){
 
-        } else {
-            Designation newDesignation = designationService.findByDesignationId(designation_id);
-            newDesignation.setDesignation_name(designation.getDesignation_name());
-            newDesignation.setCapital(designation.getCapital());
-            newDesignation.setLast_modified(new Date());
-            try {
-                designationService.updateDesignation(designation);
-                response.setInfo(newDesignation);
-                response.setStatus(Status.SUCCESS);
-                response.setMessage("Designation is updated successfully.");
-            } catch (Exception e) {
-                e.printStackTrace();
-                response.setInfo(newDesignation);
-                response.setStatus(Status.FAIL);
-                response.setMessage("Designation is not updated.\n\n" + e.getMessage());
-            }
-        }*/
         return response;
     }
     
     @ResponseBody
-    @RequestMapping(value = "/updateDesignation", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateDesignation", method = RequestMethod.PUT)
     public WebServiceResponse updateDesignation(@RequestBody Designation designation) {
         WebServiceResponse response = new WebServiceResponse();
         //Designation designationFromDB=null;
@@ -92,9 +74,9 @@ public class DesignationController {
             response.setInfo(designation);
             response.setStatus(Status.SUCCESS);
         } catch (Exception ex) {
-            response.setMessage("Designation details not updated");
+            response.setMessage("Designation details not updated"+ex);
             response.setStatus(Status.FAIL);
-            response.setInfo(ex.getStackTrace());
+            //response.setInfo(ex.getStackTrace());
         }
         return response;
     }

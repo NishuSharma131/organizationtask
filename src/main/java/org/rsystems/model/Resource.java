@@ -14,9 +14,7 @@ public class Resource {
 
 	@Column(name = "resource_name")
 	String resource_name;
-	
-//	@Column(name = "project_id")
-//	int project_id;
+
 	
 	@Column(name = "designation_id")
 	String designation_id;

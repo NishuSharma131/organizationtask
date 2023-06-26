@@ -19,14 +19,15 @@ public class Project {
 	Double allocated_capital;
 
 	
-	@Column(name = "last_modified")
-	Date last_modified;
+//	@Column(name = "last_modified")
+//	Date last_modified;
 
 //	@Column(name = "resource_id")
 //	int resource_id;
 //	@Column(name = "used_capital")//need to delete
 //	Double used_capital;
-
+	@Transient
+    @Column(name = "used_capital")
 	Double usedCapital;
 
 	public Double getUsedCapital() {
@@ -61,13 +62,13 @@ public class Project {
 		this.allocated_capital = allocated_capital;
 	}
 
-	public Date getLast_modified() {
-		return last_modified;
-	}
-
-	public void setLast_modified(Date last_modified) {
-		this.last_modified = last_modified;
-	}
+//	public Date getLast_modified() {
+//		return last_modified;
+//	}
+//
+//	public void setLast_modified(Date last_modified) {
+//		this.last_modified = last_modified;
+//	}
 
 
 }
